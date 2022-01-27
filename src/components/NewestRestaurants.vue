@@ -12,7 +12,7 @@
         <p>
           {{ restaurant.description }}
         </p>
-        {{ restaurant.createdAt }}
+        {{ restaurant.createdAt | fromNow }}
         <hr />
       </div>
     </div>
@@ -20,12 +20,23 @@
 </template>
 
 <script>
+import moment from 'moment'
+
 export default {
   name: 'NewestRestaurants',
   props: {
     restaurants: {
       type: Array,
       required: true,
+    },
+  },
+  filters: {
+    fromNow(value) {
+      if (!value) {
+        return '-'
+      }
+
+      return moment(value).fromNow()
     },
   },
 }
