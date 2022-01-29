@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import { fromNowFilter } from './../utils/mixins'
 
 // 模擬 API 取得目前登入的使用者資料
 const dummyUser = {
@@ -52,14 +52,6 @@ export default {
       currentUser: dummyUser.currentUser,
     }
   },
-  filters: {
-    fromNow(value) {
-      if (!value) {
-        return '-'
-      }
-
-      return moment(value).fromNow()
-    },
-  },
+  mixins: [fromNowFilter],
 }
 </script>
