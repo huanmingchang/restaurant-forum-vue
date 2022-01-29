@@ -3,7 +3,7 @@
     <NavTabs />
 
     <!-- RestaurantsNavPills -->
-
+    <RestaurantNavPills :categories="categories" />
     <!-- RestaurantCard -->
     <div class="row">
       <RestaurantCard
@@ -20,6 +20,7 @@
 <script>
 import NavTabs from './../components/NavTabs'
 import RestaurantCard from './../components/RestaurantCard'
+import RestaurantNavPills from './../components/RestaurantsNavPills'
 
 // 模擬 API 傳回來的資料
 const dummyData = {
@@ -301,6 +302,7 @@ export default {
   components: {
     NavTabs,
     RestaurantCard,
+    RestaurantNavPills,
   },
   data() {
     return {
