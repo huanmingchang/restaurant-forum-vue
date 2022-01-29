@@ -2,6 +2,7 @@
   <div class="container py-5">
     <h1>餐廳描述頁</h1>
     <!-- 餐廳資訊頁 RestaurantDetail -->
+    <RestaurantDetail :initial-restaurant="restaurant" />
     <hr />
     <!-- 餐廳評論 RestaurantComments -->
     <!-- 新增評論 CreateComment -->
@@ -9,6 +10,8 @@
 </template>
 
 <script>
+import RestaurantDetail from './../components/RestaurantDetail.vue'
+
 // 模擬 API 傳回的資料
 const dummyData = {
   restaurant: {
@@ -99,7 +102,9 @@ const dummyData = {
 
 export default {
   name: 'RestaurantShow',
-
+  components: {
+    RestaurantDetail,
+  },
   data() {
     return {
       restaurant: {
@@ -124,7 +129,9 @@ export default {
       this.restaurant = {
         id: dummyData.restaurant.id,
         name: dummyData.restaurant.name,
-        categoryName: dummyData.restaurant.Category.name,
+        categoryName: dummyData.restaurant.Category.name
+          ? dummyData.restaurant.Category.name
+          : '未分類',
         image: dummyData.restaurant.image,
         openingHours: dummyData.restaurant.opening_hours,
         tel: dummyData.restaurant.tel,
