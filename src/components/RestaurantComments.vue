@@ -8,6 +8,7 @@
           v-if="currentUser.isAdmin"
           type="button"
           class="btn btn-danger float-right"
+          @click.stop.prevent="handleDeleteButtonClick(comment.id)"
         >
           Delete
         </button>
@@ -51,6 +52,12 @@ export default {
     return {
       currentUser: dummyUser.currentUser,
     }
+  },
+  methods: {
+    handleDeleteButtonClick(commentId) {
+      // TODO 請求 API 伺服器刪除 id 為 commentId 的評論
+      this.$emit('after-delete-comment', commentId)
+    },
   },
   mixins: [fromNowFilter],
 }
