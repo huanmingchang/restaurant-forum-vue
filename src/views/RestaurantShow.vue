@@ -5,12 +5,14 @@
     <RestaurantDetail :initial-restaurant="restaurant" />
     <hr />
     <!-- 餐廳評論 RestaurantComments -->
+    <RestaurantComments :restaurant-comments="restaurantComments" />
     <!-- 新增評論 CreateComment -->
   </div>
 </template>
 
 <script>
 import RestaurantDetail from './../components/RestaurantDetail.vue'
+import RestaurantComments from './../components/RestaurantComments'
 
 // 模擬 API 傳回的資料
 const dummyData = {
@@ -104,6 +106,7 @@ export default {
   name: 'RestaurantShow',
   components: {
     RestaurantDetail,
+    RestaurantComments,
   },
   data() {
     return {
