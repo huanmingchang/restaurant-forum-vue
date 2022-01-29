@@ -3,7 +3,7 @@
     <NavTabs />
 
     <!-- RestaurantsNavPills -->
-    <RestaurantNavPills :categories="categories" />
+    <RestaurantsNavPills :categories="categories" />
     <!-- RestaurantCard -->
     <div class="row">
       <RestaurantCard
@@ -14,13 +14,21 @@
     </div>
 
     <!-- RestaurantsPagination -->
+    <RestaurantsPagination
+      :category-id="categoryId"
+      :current-page="currentPage"
+      :total-page="totalPage"
+      :previous-page="previousPage"
+      :next-page="nextPage"
+    />
   </div>
 </template>
 
 <script>
 import NavTabs from './../components/NavTabs'
 import RestaurantCard from './../components/RestaurantCard'
-import RestaurantNavPills from './../components/RestaurantsNavPills'
+import RestaurantsNavPills from './../components/RestaurantsNavPills'
+import RestaurantsPagination from './../components/RestaurantsPagination'
 
 // 模擬 API 傳回來的資料
 const dummyData = {
@@ -302,7 +310,8 @@ export default {
   components: {
     NavTabs,
     RestaurantCard,
-    RestaurantNavPills,
+    RestaurantsNavPills,
+    RestaurantsPagination,
   },
   data() {
     return {
