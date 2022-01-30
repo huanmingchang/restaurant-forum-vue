@@ -4,7 +4,10 @@
     <div class="card-body">
       <div v-for="restaurant in restaurants" :key="restaurant.id">
         <h4>
-          <a href="#">{{ restaurant.name }}</a>
+          <router-link
+            :to="{ name: 'restaurant-show', params: { id: restaurant.id } }"
+            >{{ restaurant.name }}</router-link
+          >
           <small>{{
             restaurant.Category.name ? restaurant.Category.name : '未分類'
           }}</small>
@@ -20,7 +23,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import { fromNowFilter } from './../utils/mixins'
 
 export default {
   name: 'NewestRestaurants',
@@ -30,17 +33,10 @@ export default {
       required: true,
     },
   },
-  filters: {
-    fromNow(value) {
-      if (!value) {
-        return '-'
-      }
-
-      return moment(value).fromNow()
-    },
-  },
+  mixins: [fromNowFilter],
 }
 </script>
+
 <style scoped>
 small {
   font-size: 10px;
