@@ -10,12 +10,17 @@
       @after-delete-comment="afterDeleteComment"
     />
     <!-- 新增評論 CreateComment -->
+    <CreateComment
+      :restaurant-id="restaurant.id"
+      @after-create-comment="afterCreateComment"
+    />
   </div>
 </template>
 
 <script>
 import RestaurantDetail from './../components/RestaurantDetail.vue'
 import RestaurantComments from './../components/RestaurantComments'
+import CreateComment from './../components/CreateComment'
 
 // 模擬 API 傳回的資料
 const dummyData = {
@@ -105,11 +110,24 @@ const dummyData = {
   isLiked: false,
 }
 
+// 向後端取得現在登入使用者的資料
+const dummyUser = {
+  currentUser: {
+    id: 1,
+    name: '管理者',
+    email: 'root@example.com',
+    image: 'https://i.pravatar.cc/300',
+    isAdmin: true,
+  },
+  isAuthenticated: true,
+}
+
 export default {
   name: 'RestaurantShow',
   components: {
     RestaurantDetail,
     RestaurantComments,
+    CreateComment,
   },
   data() {
     return {
@@ -126,6 +144,7 @@ export default {
         isLiked: false,
       },
       restaurantComments: [],
+      currentUser: dummyUser.currentUser,
     }
   },
   methods: {
@@ -153,6 +172,19 @@ export default {
       this.restaurantComments = this.restaurantComments.filter(
         (comment) => comment.id !== commentId
       )
+    },
+    afterCreateComment(payload) {
+      const { commentId, restaurantId, text } = payload
+      this.restaurantComments.push({
+        id: commentId,
+        RestaurantId: restaurantId,
+        text: text,
+        createdAt: new Date(),
+        User: {
+          id: this.currentUser.id,
+          name: this.currentUser.name,
+        },
+      })
     },
   },
   created() {
