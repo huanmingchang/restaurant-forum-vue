@@ -26,7 +26,7 @@
             </li>
           </ul>
           <p>
-            <router-link to="" v-if="userProfile.isAdmin"
+            <router-link to="" v-if="userProfile.id === currentUser.id"
               ><button type="submit" class="btn btn-primary mr-2">
                 edit
               </button></router-link
@@ -60,35 +60,22 @@
 export default {
   name: 'UserProfileCard',
   props: {
-    initialUserProfile: {
+    userProfile: {
+      type: Object,
+      required: true,
+    },
+    currentUser: {
       type: Object,
       required: true,
     },
   },
-  data() {
-    return {
-      userProfile: {},
-    }
-  },
   methods: {
-    fetchUserProfile() {
-      this.userProfile = this.initialUserProfile
-    },
     addFollowing() {
-      this.userProfile = {
-        ...this.userProfile,
-        isFollowed: true,
-      }
+      this.$emit('add-following')
     },
     deleteFollowing() {
-      this.userProfile = {
-        ...this.userProfile,
-        isFollowed: false,
-      }
+      this.$emit('delete-following')
     },
-  },
-  created() {
-    this.fetchUserProfile()
   },
 }
 </script>

@@ -2,7 +2,12 @@
   <div class="album py-5 bg-light">
     <div class="container">
       <!-- user profile card -->
-      <UserProfileCard :initial-user-profile="userProfile" />
+      <UserProfileCard
+        :userProfile="userProfile"
+        :currentUser="currentUser"
+        @add-following="handleAddFollowing"
+        @delete-following="handleDeleteFollowing"
+      />
       <div class="row">
         <div class="col-md-4">
           <!-- user followings card -->
@@ -1290,6 +1295,18 @@ const dummyData = {
   isFollowed: false,
 }
 
+// 模擬 API 回傳資料
+const dummyUser = {
+  currentUser: {
+    id: 1,
+    name: '管理者',
+    email: 'root@example.com',
+    image: 'https://i.pravatar.cc/300',
+    isAdmin: true,
+  },
+  isAuthenticated: true,
+}
+
 export default {
   name: 'User',
   components: {
@@ -1302,6 +1319,7 @@ export default {
   data() {
     return {
       userProfile: {},
+      currentUser: {},
     }
   },
   methods: {
@@ -1312,10 +1330,35 @@ export default {
         isFollowed: dummyData.isFollowed,
       }
     },
+    fetchCurrentUser() {
+      this.currentUser = dummyUser.currentUser
+    },
+    handleAddFollowing() {
+      // TODO 向伺服器更新資料
+      this.userProfile = {
+        ...this.userProfile,
+        isFollowed: true,
+      }
+      this.userProfile.Followings.push(this.currentUser)
+    },
+    handleDeleteFollowing() {
+      // TODO 向伺服器更新資料
+      this.userProfile = {
+        ...this.userProfile,
+        isFollowed: false,
+      }
+      this.userProfile = {
+        ...this.userProfile,
+        Followings: this.userProfile.Followings.filter(
+          (user) => user.id !== this.currentUser.id
+        ),
+      }
+    },
   },
   created() {
     const { id: userId } = this.$route.params
     this.fetchUserProfile(userId)
+    this.fetchCurrentUser()
   },
 }
 </script>
