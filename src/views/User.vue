@@ -6,14 +6,15 @@
       <div class="row">
         <div class="col-md-4">
           <!-- user followings card -->
-          <UserFollowingsCard :userProfile="userProfile"/>
+          <UserFollowingsCard :userProfile="userProfile" />
           <br />
           <!-- user followers card -->
-          <UserFollowersCard :userProfile="userProfile"/>
+          <UserFollowersCard :userProfile="userProfile" />
         </div>
 
         <div class="col-md-8">
-          <!-- user comment cards -->
+          <!-- user comments cards -->
+          <UserCommentsCard :userProfile="userProfile" />
           <br />
           <!-- user favorited restaurants -->
         </div>
@@ -26,7 +27,9 @@
 import UserProfileCard from './../components/UserProfileCard'
 import UserFollowingsCard from './../components/UserFollowingsCard'
 import UserFollowersCard from './../components/UserFollowersCard'
+import UserCommentsCard from './../components/UserCommentsCard'
 
+// 模擬 API 回傳的資料
 const dummyData = {
   profile: {
     id: 1,
@@ -1291,6 +1294,7 @@ export default {
     UserProfileCard,
     UserFollowingsCard,
     UserFollowersCard,
+    UserCommentsCard,
   },
   data() {
     return {
