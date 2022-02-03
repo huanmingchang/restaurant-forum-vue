@@ -26,7 +26,9 @@
             </li>
           </ul>
           <p>
-            <router-link to="" v-if="userProfile.id === currentUser.id"
+            <router-link
+              :to="{ name: 'user-edit', params: { id: userProfile.id } }"
+              v-if="userProfile.id === currentUser.id"
               ><button type="submit" class="btn btn-primary mr-2">
                 edit
               </button></router-link
