@@ -34,7 +34,11 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">
+      <button
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+        :disabled="isProcessing"
+      >
         Submit
       </button>
 
@@ -59,44 +63,45 @@ export default {
     return {
       email: '',
       password: '',
+      isProcessing: false,
     }
   },
   methods: {
-    handleSubmit() {
-      // 當使用者沒有填入帳號密碼時跳出提示訊息
-      if (!this.email | !this.password) {
-        Toast.fire({
-          icon: 'warning',
-          title: '請輸入 email 和 password',
-        })
-        return
-      }
+    async handleSubmit() {
+      try {
+        // 當使用者沒有填入帳號密碼時跳出提示訊息
+        if (!this.email | !this.password) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請輸入 email 和 password',
+          })
+          return
+        }
 
-      authorizationAPI
-        .signIn({
+        this.isProcessing = true
+
+        const response = await authorizationAPI.signIn({
           email: this.email,
           password: this.password,
         })
-        .then((response) => {
-          const { data } = response
 
-          if (data.status !== 'success') {
-            throw new Error(data.message)
-          }
+        const { data } = response
 
-          localStorage.setItem('token', data.token)
-          this.$router.push('/restaurants')
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        localStorage.setItem('token', data.token)
+        this.$router.push('/restaurants')
+      } catch (error) {
+        this.password = ''
+
+        Toast.fire({
+          icon: 'warning',
+          title: '請確認您輸入了正確的帳號密碼',
         })
-        .catch((error) => {
-          this.password = ''
-
-          Toast.fire({
-            icon: 'warning',
-            title: '請確認您輸入了正確的帳號密碼',
-          })
-
-          console.log(error)
-        })
+        this.isProcessing = false
+        console.log(error)
+      }
     },
   },
 }
