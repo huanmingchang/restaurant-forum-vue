@@ -51,6 +51,7 @@
 
 <script>
 import authorizationAPI from './../apis/authorization'
+import { Toast } from './../utils/helpers'
 
 export default {
   name: 'SignIn',
@@ -62,6 +63,15 @@ export default {
   },
   methods: {
     handleSubmit() {
+      // 當使用者沒有填入帳號密碼時跳出提示訊息
+      if (!this.email | !this.password) {
+        Toast.fire({
+          icon: 'warning',
+          title: '請輸入 email 和 password',
+        })
+        return
+      }
+
       authorizationAPI
         .signIn({
           email: this.email,
@@ -69,8 +79,23 @@ export default {
         })
         .then((response) => {
           const { data } = response
+
+          if (data.status !== 'success') {
+            throw new Error(data.message)
+          }
+
           localStorage.setItem('token', data.token)
           this.$router.push('/restaurants')
+        })
+        .catch((error) => {
+          this.password = ''
+
+          Toast.fire({
+            icon: 'warning',
+            title: '請確認您輸入了正確的帳號密碼',
+          })
+
+          console.log(error)
         })
     },
   },
