@@ -32,7 +32,7 @@ import RestaurantsNavPills from './../components/RestaurantsNavPills'
 import RestaurantsPagination from './../components/RestaurantsPagination'
 import restaurantsAPI from './../apis/restaurants'
 import { Toast } from './../utils/helpers'
-
+/* eslint-disable */
 export default {
   name: 'Restaurants',
   components: {
@@ -53,12 +53,17 @@ export default {
       nextPage: -1,
     }
   },
+  beforeRouteUpdate(to, from, next) {
+    const { page = '', categoryId = '' } = to.query
+    this.fetchRestaurants({ queryPage: page, queryCategoryId: categoryId })
+    next()
+  },
   methods: {
-    async fetchRestaurants({ page, categoryId }) {
+    async fetchRestaurants({ queryPage, queryCategoryId }) {
       try {
         const response = await restaurantsAPI.getRestaurants({
-          page: page,
-          categoryId: categoryId,
+          page: queryPage,
+          categoryId: queryCategoryId,
         })
         this.restaurants = response.data.restaurants
         this.categories = response.data.categories
@@ -77,10 +82,8 @@ export default {
     },
   },
   created() {
-    this.fetchRestaurants({
-      page: 1,
-      categoryId: '',
-    })
+    const { page = '', categoryId = '' } = this.$route.query
+    this.fetchRestaurants({ queryPage: page, queryCategoryId: categoryId })
   },
 }
 </script>
