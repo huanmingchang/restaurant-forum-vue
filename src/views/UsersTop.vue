@@ -38,51 +38,8 @@
 
 <script>
 import NavTabs from './../components/NavTabs'
-
-// 模擬 API 回傳的資料
-const dummyData = {
-  users: [
-    {
-      id: 1,
-      name: 'root',
-      email: 'root@example.com',
-      password: '$2a$10$mRfDsi1GCUPZZAQkMJK9T.M.KsjvYerdqTdAU6ASllfdjmpSmlPIG',
-      isAdmin: true,
-      image: null,
-      createdAt: '2022-01-26T13:54:41.000Z',
-      updatedAt: '2022-01-26T13:54:41.000Z',
-      Followers: [],
-      FollowerCount: 0,
-      isFollowed: false,
-    },
-    {
-      id: 2,
-      name: 'user1',
-      email: 'user1@example.com',
-      password: '$2a$10$u7xWhmmIFuBqvBkVUar8G.h2R4RsV9vFIyHhTYzUhnmuL4b7vZKiy',
-      isAdmin: false,
-      image: null,
-      createdAt: '2022-01-26T13:54:41.000Z',
-      updatedAt: '2022-01-26T13:54:41.000Z',
-      Followers: [],
-      FollowerCount: 0,
-      isFollowed: false,
-    },
-    {
-      id: 3,
-      name: 'user2',
-      email: 'user2@example.com',
-      password: '$2a$10$4Ie9Vnx3hAyT3m7OvhXaAeYxMjXDlLFUKScopJA8Tv1TyK9HS2aV.',
-      isAdmin: false,
-      image: null,
-      createdAt: '2022-01-26T13:54:41.000Z',
-      updatedAt: '2022-01-26T13:54:41.000Z',
-      Followers: [],
-      FollowerCount: 0,
-      isFollowed: false,
-    },
-  ],
-}
+import usersAPI from './../apis/users'
+import { Toast } from './../utils/helpers'
 
 export default {
   name: 'UsersTop',
@@ -95,8 +52,17 @@ export default {
     }
   },
   methods: {
-    fetchUsers() {
-      this.users = dummyData.users
+    async fetchUsers() {
+      try {
+        const { data } = await usersAPI.getTopUsers()
+        this.users = data.users
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得美食達人，請稍後再試',
+        })
+      }
     },
     followUser(user) {
       this.users.map((_user) => {
