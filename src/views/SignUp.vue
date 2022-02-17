@@ -62,8 +62,12 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">
-        Submit
+      <button
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+        :disabled="isProcessing"
+      >
+        {{ isProcessing ? '處理中' : 'ç' }}
       </button>
 
       <div class="text-center mb-3">
@@ -78,6 +82,9 @@
 </template>
 
 <script>
+import authorizationAPI from './../apis/authorization'
+import { Toast } from './../utils/helpers'
+
 export default {
   name: 'SingUp',
   data() {
@@ -86,19 +93,58 @@ export default {
       email: '',
       password: '',
       passwordCheck: '',
+      isProcessing: false,
     }
   },
   methods: {
-    handleSubmit() {
-      // TODO 向後端註冊使用者資料
-      const data = JSON.stringify({
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        passwordCheck: this.passwordCheck,
-      })
+    async handleSubmit() {
+      try {
+        if (!this.name) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請輸入使用者名稱',
+          })
+          return
+        }
 
-      console.log(data)
+        if (!this.email) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請輸入 email',
+          })
+          return
+        }
+
+        if (!this.password | !this.passwordCheck) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請輸入 password',
+          })
+          return
+        }
+
+        this.isProcessing = true
+
+        const { data } = await authorizationAPI.signUp({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          passwordCheck: this.passwordCheck,
+        })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.$router.push({ name: 'sign-in' })
+      } catch (error) {
+        this.isProcessing = false
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法註冊使用者，請稍後再試',
+        })
+      }
     },
   },
 }
