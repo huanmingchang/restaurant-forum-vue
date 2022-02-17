@@ -126,25 +126,37 @@ export default {
         })
       }
     },
-    // createCategory() {
-    //   // TODO 透過 API 向後端新增餐廳類別並取得 id
-    //   this.categories.push({
-    //     id: uuidv4(),
-    //     name: this.newCategoryName,
-    //   })
+    createCategory() {
+      // TODO 透過 API 向後端新增餐廳類別並取得 id
+      this.categories.push({
+        name: this.newCategoryName,
+      })
 
-    //   this.newCategoryName = ''
-    // },
-    // deleteCategory(categoryId) {
-    //   this.categories = this.categories.filter(
-    //     (category) => category.id !== categoryId
-    //   )
-    // },
-    // updateCategory({ categoryId, name }) {
-    //   // TODO 透過 API 向後端更新餐廳類別名稱
-    //   console.log(name)
-    //   this.toggleIsEditing(categoryId)
-    // },
+      this.newCategoryName = ''
+    },
+    async deleteCategory(categoryId) {
+      try {
+        const { data } = await adminAPI.categories.delete({ categoryId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.categories = this.categories.filter(
+          (category) => category.id !== categoryId
+        )
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法刪除餐廳類別，請稍後再試',
+        })
+      }
+    },
+    updateCategory({ categoryId, name }) {
+      // TODO 透過 API 向後端更新餐廳類別名稱
+      console.log(name)
+      this.toggleIsEditing(categoryId)
+    },
     handleCancel(categoryId) {
       this.categories = this.categories.map((category) => {
         if (category.id === categoryId) {

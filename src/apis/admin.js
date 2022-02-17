@@ -14,7 +14,7 @@ export default {
       })
     },
     delete({ categoryId }) {
-      return apiHelper.delete(`/admin/categores/${categoryId}`, {
+      return apiHelper.delete(`/admin/categories/${categoryId}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       })
     },
