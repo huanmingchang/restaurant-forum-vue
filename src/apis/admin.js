@@ -9,9 +9,13 @@ export default {
       })
     },
     create({ name }) {
-      return apiHelper.post('/admin/categories', name, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      })
+      return apiHelper.post(
+        '/admin/categories',
+        { name },
+        {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        }
+      )
     },
     delete({ categoryId }) {
       return apiHelper.delete(`/admin/categories/${categoryId}`, {

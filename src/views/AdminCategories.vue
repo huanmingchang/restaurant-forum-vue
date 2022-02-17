@@ -126,13 +126,36 @@ export default {
         })
       }
     },
-    createCategory() {
-      // TODO 透過 API 向後端新增餐廳類別並取得 id
-      this.categories.push({
-        name: this.newCategoryName,
-      })
+    async createCategory() {
+      try {
+        if (!this.newCategoryName) {
+          Toast.fire({
+            icon: 'warning',
+            title: '請輸入餐廳類別名稱',
+          })
+        }
 
-      this.newCategoryName = ''
+        const { data } = await adminAPI.categories.create({
+          name: this.newCategoryName,
+        })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.categories.push({
+          id: data.categoryId,
+          name: this.newCategoryName,
+        })
+
+        this.newCategoryName = ''
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增餐廳類別，請稍後再試',
+        })
+      }
     },
     async deleteCategory(categoryId) {
       try {
