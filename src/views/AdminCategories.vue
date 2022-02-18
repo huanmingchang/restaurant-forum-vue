@@ -2,7 +2,7 @@
   <div class="container py-5">
     <AdminNav />
 
-    <form class="my-4">
+    <form class="my-4" v-show="!isLoading">
       <div class="form-row">
         <div class="col-auto">
           <input
@@ -17,8 +17,9 @@
             type="button"
             class="btn btn-primary"
             @click.stop.prevent="createCategory"
+            :disabled="isProcessing"
           >
-            新增
+            {{ isProcessing ? '處理中' : '新增' }}
           </button>
         </div>
       </div>
@@ -101,6 +102,8 @@ export default {
     return {
       categories: [],
       newCategoryName: '',
+      isLoading: true,
+      isProcessing: false,
     }
   },
   created() {
@@ -110,7 +113,6 @@ export default {
     async fetchCategories() {
       try {
         const { data } = await adminAPI.categories.get()
-
         this.categories = data.categories.map((category) => {
           return {
             ...category,
@@ -118,8 +120,10 @@ export default {
             nameCached: '',
           }
         })
+        this.isLoading = false
       } catch (error) {
         console.log(error)
+        this.isLoading = false
         Toast.fire({
           icon: 'error',
           title: '無法取得餐廳類別，請稍後再試',
@@ -135,6 +139,7 @@ export default {
           })
         }
 
+        this.isProcessing = true
         const { data } = await adminAPI.categories.create({
           name: this.newCategoryName,
         })
@@ -149,8 +154,10 @@ export default {
         })
 
         this.newCategoryName = ''
+        this.isProcessing = false
       } catch (error) {
         console.log(error)
+        this.isProcessing = false
         Toast.fire({
           icon: 'error',
           title: '無法新增餐廳類別，請稍後再試',
@@ -175,10 +182,21 @@ export default {
         })
       }
     },
-    updateCategory({ categoryId, name }) {
-      // TODO 透過 API 向後端更新餐廳類別名稱
-      console.log(name)
-      this.toggleIsEditing(categoryId)
+    async updateCategory({ categoryId, name }) {
+      try {
+        const { data } = await adminAPI.categories.update({ categoryId, name })
+        console.log(data)
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+        this.toggleIsEditing(categoryId)
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法編輯餐廳類別，請稍後再試',
+        })
+      }
     },
     handleCancel(categoryId) {
       this.categories = this.categories.map((category) => {

@@ -23,9 +23,13 @@ export default {
       })
     },
     update({ categoryId, name }) {
-      return apiHelper.put(`/admin/categories/${categoryId}`, name, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      })
+      return apiHelper.put(
+        `/admin/categories/${categoryId}`,
+        { categoryId, name },
+        {
+          headers: { Authorization: `Bearer ${getToken()}` },
+        }
+      )
     },
   },
   restaurants: {
