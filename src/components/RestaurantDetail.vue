@@ -33,7 +33,7 @@
       <p>{{ restaurant.description }}</p>
       <router-link
         class="btn btn-primary btn-border mr-2"
-        :to="{ name: 'restaurant-dashboard', params: { id: restaurant.id} }"
+        :to="{ name: 'restaurant-dashboard', params: { id: restaurant.id } }"
         >Dashboard</router-link
       >
 
@@ -86,6 +86,14 @@ export default {
     return {
       restaurant: this.initialRestaurant,
     }
+  },
+  watch: {
+    initialRestaurant(newValue) {
+      this.restaurant = {
+        ...this.restaurant,
+        ...newValue,
+      }
+    },
   },
   methods: {
     addFavorite() {

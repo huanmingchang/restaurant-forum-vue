@@ -21,106 +21,9 @@
 import RestaurantDetail from './../components/RestaurantDetail.vue'
 import RestaurantComments from './../components/RestaurantComments'
 import CreateComment from './../components/CreateComment'
-
-// 模擬 API 傳回的資料
-const dummyData = {
-  restaurant: {
-    id: 1,
-    name: 'Kale Herzog',
-    tel: '402.373.6546',
-    address: '666 Lukas Bridge',
-    opening_hours: '08:00',
-    description:
-      'Deleniti magni incidunt culpa veniam nihil aperiam architecto sed eveniet. Dolore veritatis quos ut aut sit eaque voluptatibus velit. Sunt sed autem sapiente quas harum consequatur consequatur. Pariatur qui quibusdam impedit incidunt porro voluptatum nulla culpa. Inventore perspiciatis dolores est. Ut facere blanditiis dolor iste animi eos.',
-    image:
-      'https://loremflickr.com/320/240/restaurant,food/?random=19.598578498989916',
-    viewCounts: 1,
-    createdAt: '2022-01-26T13:54:41.000Z',
-    updatedAt: '2022-01-29T02:13:10.862Z',
-    CategoryId: 5,
-    Category: {
-      id: 5,
-      name: '素食料理',
-      createdAt: '2022-01-26T13:54:41.000Z',
-      updatedAt: '2022-01-26T13:54:41.000Z',
-    },
-    FavoritedUsers: [],
-    LikedUsers: [],
-    Comments: [
-      {
-        id: 101,
-        text: 'Illum ut officia maiores.',
-        UserId: 3,
-        RestaurantId: 1,
-        createdAt: '2022-01-26T13:54:41.000Z',
-        updatedAt: '2022-01-26T13:54:41.000Z',
-        User: {
-          id: 3,
-          name: 'user2',
-          email: 'user2@example.com',
-          password:
-            '$2a$10$4Ie9Vnx3hAyT3m7OvhXaAeYxMjXDlLFUKScopJA8Tv1TyK9HS2aV.',
-          isAdmin: false,
-          image: null,
-          createdAt: '2022-01-26T13:54:41.000Z',
-          updatedAt: '2022-01-26T13:54:41.000Z',
-        },
-      },
-      {
-        id: 51,
-        text: 'Maxime repudiandae voluptatem quia.',
-        UserId: 3,
-        RestaurantId: 1,
-        createdAt: '2022-01-26T13:54:41.000Z',
-        updatedAt: '2022-01-26T13:54:41.000Z',
-        User: {
-          id: 3,
-          name: 'user2',
-          email: 'user2@example.com',
-          password:
-            '$2a$10$4Ie9Vnx3hAyT3m7OvhXaAeYxMjXDlLFUKScopJA8Tv1TyK9HS2aV.',
-          isAdmin: false,
-          image: null,
-          createdAt: '2022-01-26T13:54:41.000Z',
-          updatedAt: '2022-01-26T13:54:41.000Z',
-        },
-      },
-      {
-        id: 1,
-        text: 'Dolorem aliquam ea voluptates impedit eos.',
-        UserId: 3,
-        RestaurantId: 1,
-        createdAt: '2022-01-26T13:54:41.000Z',
-        updatedAt: '2022-01-26T13:54:41.000Z',
-        User: {
-          id: 3,
-          name: 'user2',
-          email: 'user2@example.com',
-          password:
-            '$2a$10$4Ie9Vnx3hAyT3m7OvhXaAeYxMjXDlLFUKScopJA8Tv1TyK9HS2aV.',
-          isAdmin: false,
-          image: null,
-          createdAt: '2022-01-26T13:54:41.000Z',
-          updatedAt: '2022-01-26T13:54:41.000Z',
-        },
-      },
-    ],
-  },
-  isFavorited: false,
-  isLiked: false,
-}
-
-// 向後端取得現在登入使用者的資料
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: '管理者',
-    email: 'root@example.com',
-    image: 'https://i.pravatar.cc/300',
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-}
+import restaurantsAPI from './../apis/restaurants'
+import { Toast } from './../utils/helpers'
+import { mapState } from 'vuex'
 
 export default {
   name: 'RestaurantShow',
@@ -144,29 +47,42 @@ export default {
         isLiked: false,
       },
       restaurantComments: [],
-      currentUser: dummyUser.currentUser,
     }
   },
+  beforeRouteUpdate(to, from, next) {
+    const { id: restaurantId } = to.params
+    this.fetchRestaurant(restaurantId)
+    next()
+  },
   methods: {
-    fetchRestaurant(restaurantId) {
-      console.log(restaurantId)
+    async fetchRestaurant(restaurantId) {
+      try {
+        const { data } = await restaurantsAPI.getRestaurantShow({
+          restaurantId,
+        })
+        this.restaurant = {
+          id: data.restaurant.id,
+          name: data.restaurant.name,
+          categoryName: data.restaurant.Category
+            ? data.restaurant.Category.name
+            : '未分類',
+          image: data.restaurant.image,
+          openingHours: data.restaurant.opening_hours,
+          tel: data.restaurant.tel,
+          address: data.restaurant.address,
+          description: data.restaurant.description,
+          isFavorited: data.isFavorited,
+          isLiked: data.isLiked,
+        }
 
-      this.restaurant = {
-        id: dummyData.restaurant.id,
-        name: dummyData.restaurant.name,
-        categoryName: dummyData.restaurant.Category.name
-          ? dummyData.restaurant.Category.name
-          : '未分類',
-        image: dummyData.restaurant.image,
-        openingHours: dummyData.restaurant.opening_hours,
-        tel: dummyData.restaurant.tel,
-        address: dummyData.restaurant.address,
-        description: dummyData.restaurant.description,
-        isFavorited: dummyData.isFavorited,
-        isLiked: dummyData.isLiked,
+        this.restaurantComments = data.restaurant.Comments
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得餐廳資料，請稍後再試',
+        })
       }
-
-      this.restaurantComments = dummyData.restaurant.Comments
     },
     afterDeleteComment(commentId) {
       this.restaurantComments = this.restaurantComments.filter(
@@ -186,6 +102,9 @@ export default {
         },
       })
     },
+  },
+  computed: {
+    ...mapState(['currentUser'])
   },
   created() {
     const { id: restaurantId } = this.$route.params
