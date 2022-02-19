@@ -65,6 +65,7 @@ export default {
           page: queryPage,
           categoryId: queryCategoryId,
         })
+
         this.restaurants = response.data.restaurants
         this.categories = response.data.categories
         this.categoryId = response.data.categoryId
