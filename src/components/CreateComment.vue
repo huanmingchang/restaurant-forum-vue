@@ -14,7 +14,9 @@
 </template>
 
 <script>
-import { v4 as uuidv4 } from 'uuid'
+// import { v4 as uuidv4 } from 'uuid'
+import usersAPI from './../apis/users'
+import { Toast } from './../utils/helpers'
 
 export default {
   name: 'CreateComment',
@@ -30,16 +32,33 @@ export default {
     }
   },
   methods: {
-    handleSubmit() {
-      // TODO 向 API 發送 POST 需求新增一筆 comment
-      // TODO 伺服器新增一筆 comment  之後會回傳 commentId
-      this.$emit('after-create-comment', {
-        commentId: uuidv4(), // 因為還沒串接 API，所以先給一筆隨機的 id
-        restaurantId: this.restaurantId,
-        text: this.text,
-      })
+    async handleSubmit() {
+      try {
+        const { data } = await usersAPI.createComment({
+          restaurantId: this.restaurantId,
+          text: this.text,
+        })
 
-      this.text = ''
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        const { commentId } = data
+
+        this.$emit('after-create-comment', {
+          commentId,
+          restaurantId: this.restaurantId,
+          text: this.text,
+        })
+
+        this.text = ''
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法新增評論，請稍後再試',
+        })
+      }
     },
   },
 }
