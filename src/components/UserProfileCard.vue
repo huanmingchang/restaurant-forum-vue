@@ -57,7 +57,7 @@
                 v-if="!userProfile.isFollowed"
                 type="submit"
                 class="btn btn-primary"
-                @click.stop.prevent="addFollowing"
+                @click.stop.prevent="addFollowing(userProfile.id)"
               >
                 追蹤
               </button>
@@ -65,7 +65,7 @@
                 v-else
                 type="submit"
                 class="btn btn-danger"
-                @click.stop.prevent="deleteFollowing"
+                @click.stop.prevent="deleteFollowing(userProfile.id)"
               >
                 取消追蹤
               </button>
@@ -91,11 +91,11 @@ export default {
     },
   },
   methods: {
-    addFollowing() {
-      this.$emit('add-following')
+    addFollowing(userId) {
+      this.$emit('add-following', userId)
     },
-    deleteFollowing() {
-      this.$emit('delete-following')
+    deleteFollowing(userId) {
+      this.$emit('delete-following', userId)
     },
   },
 }

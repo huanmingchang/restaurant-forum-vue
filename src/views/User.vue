@@ -11,10 +11,10 @@
       <div class="row">
         <div class="col-md-4">
           <!-- user followings card -->
-          <UserFollowingsCard :userProfile="userProfile" />
+          <UserFollowingsCard :initial-user-profile="userProfile" />
           <br />
           <!-- user followers card -->
-          <UserFollowersCard :userProfile="userProfile" />
+          <UserFollowersCard :initial-user-profile="userProfile" />
         </div>
 
         <div class="col-md-8">
@@ -37,18 +37,7 @@ import UserCommentsCard from './../components/UserCommentsCard'
 import UserFavoritedRestaurantsCard from './../components/UserFavoritedRestaurantsCard'
 import usersAPI from './../apis/users'
 import { Toast } from './../utils/helpers'
-
-// 模擬 API 回傳資料
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: '管理者',
-    email: 'root@example.com',
-    image: 'https://i.pravatar.cc/300',
-    isAdmin: true,
-  },
-  isAuthenticated: true,
-}
+import { mapState } from 'vuex'
 
 export default {
   name: 'User',
@@ -62,9 +51,9 @@ export default {
   data() {
     return {
       userProfile: {},
-      currentUser: {},
     }
   },
+
   methods: {
     async fetchUserProfile(userId) {
       try {
@@ -84,30 +73,56 @@ export default {
         })
       }
     },
-    fetchCurrentUser() {
-      this.currentUser = dummyUser.currentUser
-    },
-    handleAddFollowing() {
-      // TODO 向伺服器更新資料
-      this.userProfile = {
-        ...this.userProfile,
-        isFollowed: true,
-      }
-      this.userProfile.Followings.push(this.currentUser)
-    },
-    handleDeleteFollowing() {
-      // TODO 向伺服器更新資料
-      this.userProfile = {
-        ...this.userProfile,
-        isFollowed: false,
-      }
-      this.userProfile = {
-        ...this.userProfile,
-        Followings: this.userProfile.Followings.filter(
-          (user) => user.id !== this.currentUser.id
-        ),
+
+    async handleAddFollowing(userId) {
+      try {
+        const { data } = await usersAPI.addFollowing({ userId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.userProfile = {
+          ...this.userProfile,
+          isFollowed: true,
+        }
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法追蹤使用者，請稍後再試',
+        })
       }
     },
+    async handleDeleteFollowing(userId) {
+      try {
+        const { data } = await usersAPI.deleteFollowing({ userId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.userProfile = {
+          ...this.userProfile,
+          isFollowed: false,
+        }
+        this.userProfile = {
+          ...this.userProfile,
+          Followings: this.userProfile.Followings.filter(
+            (user) => user.id !== { ...mapState(['currentUser']) }.id
+          ),
+        }
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消追蹤使用者，請稍後再試',
+        })
+      }
+    },
+  },
+  computed: {
+    ...mapState(['currentUser']),
   },
   beforeRouteUpdate(to, from, next) {
     const { id } = to.params
@@ -117,7 +132,6 @@ export default {
   created() {
     const { id } = this.$route.params
     this.fetchUserProfile(id)
-    this.fetchCurrentUser()
   },
 }
 </script>

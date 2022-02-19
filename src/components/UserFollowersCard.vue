@@ -22,9 +22,26 @@
 export default {
   name: 'UserFollowersCard',
   props: {
-    userProfile: {
+    initialUserProfile: {
       type: Object,
       required: true,
+    },
+  },
+  data() {
+    return {
+      userProfile: this.initialUserProfile,
+    }
+  },
+  watch: {
+    initialUserProfile: {
+      handler: function (newValue) {
+        this.userProfile = {
+          ...this.userProfile,
+          ...newValue,
+        }
+      },
+      deep: true,
+      immediate: true,
     },
   },
 }
