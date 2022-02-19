@@ -22,6 +22,7 @@ import RestaurantDetail from './../components/RestaurantDetail.vue'
 import RestaurantComments from './../components/RestaurantComments'
 import CreateComment from './../components/CreateComment'
 import restaurantsAPI from './../apis/restaurants'
+import adminAPI from './../apis/admin'
 import { Toast } from './../utils/helpers'
 import { mapState } from 'vuex'
 
@@ -84,10 +85,24 @@ export default {
         })
       }
     },
-    afterDeleteComment(commentId) {
-      this.restaurantComments = this.restaurantComments.filter(
-        (comment) => comment.id !== commentId
-      )
+    async afterDeleteComment(commentId) {
+      try {
+        const { data } = await adminAPI.comments.delete({ commentId })
+
+        if (data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.restaurantComments = this.restaurantComments.filter(
+          (comment) => comment.id !== commentId
+        )
+      } catch (error) {
+        console.log(error)
+        Toast.fire({
+          icon: 'error',
+          title: '無法刪除評論，請稍後再試',
+        })
+      }
     },
     afterCreateComment(payload) {
       const { commentId, restaurantId, text } = payload
@@ -104,7 +119,7 @@ export default {
     },
   },
   computed: {
-    ...mapState(['currentUser'])
+    ...mapState(['currentUser']),
   },
   created() {
     const { id: restaurantId } = this.$route.params

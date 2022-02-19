@@ -57,7 +57,6 @@ export default {
   },
   methods: {
     handleDeleteButtonClick(commentId) {
-      // TODO 請求 API 伺服器刪除 id 為 commentId 的評論
       this.$emit('after-delete-comment', commentId)
     },
   },
