@@ -1,7 +1,10 @@
 <template>
   <div class="card">
     <div class="card-header">
-      <strong> {{ userProfile.Followers.length }}</strong> followers (追隨者)
+      <strong>
+        {{ userProfile.Followers ? userProfile.Followers.length : '0' }}</strong
+      >
+      followers (追隨者)
     </div>
     <div
       v-for="follower in userProfile.Followers"

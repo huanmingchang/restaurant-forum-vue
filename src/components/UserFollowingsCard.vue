@@ -1,7 +1,12 @@
 <template>
   <div class="card">
     <div class="card-header">
-      <strong> {{ userProfile.Followings.length }}</strong> followings (追蹤者)
+      <strong>
+        {{
+          userProfile.Followings ? userProfile.Followings.length : '0'
+        }}</strong
+      >
+      followings (追蹤者)
     </div>
     <div class="card-body">
       <router-link
