@@ -110,9 +110,29 @@ const router = new VueRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
-  // 使用 dispatch 呼叫 Vuex 內的 actions
-  store.dispatch('fetchCurrentUser')
+router.beforeEach(async (to, from, next) => {
+  const token = localStorage.getItem('token')
+
+  let isAuthenticated = false
+
+  // 如果有 token 才向後端驗證
+  if (token) {
+    isAuthenticated = await store.dispatch('fetchCurrentUser')
+  }
+
+  const pathWithoutAuthentication = ['sign-in', 'sign-up']
+
+  // 如果驗證不通過，則轉址到 sign-in 頁面
+  if (!isAuthenticated && !pathWithoutAuthentication.includes(to.name)) {
+    next('/signin')
+    return
+  }
+
+  // 如果驗證通過，則轉址到 restaurants 頁面
+  if (isAuthenticated && pathWithoutAuthentication.includes(to.name)) {
+    next('/restaurants')
+    return
+  }
   next()
 })
 
