@@ -7,6 +7,16 @@ import store from './../store'
 
 Vue.use(VueRouter)
 
+const authorizeIsAdmin = (to, from, next) => {
+  const currentUser = store.state.currentUser
+  if (currentUser && !currentUser.isAdmin) {
+    next('/not-found')
+    return
+  }
+
+  next()
+}
+
 const routes = [
   {
     path: '/',
@@ -67,36 +77,43 @@ const routes = [
     path: '/admin',
     exact: true,
     redirect: '/admin/restaurants/',
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: '/admin/restaurants',
     name: 'admin-restaurants',
     component: () => import('../views/AdminRestaurants.vue'),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: '/admin/restaurants/new',
     name: 'admin-restaurant-new',
     component: () => import('../views/AdminRestaurantNew.vue'),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: '/admin/restaurants/:id/edit',
     name: 'admin-restaurant-edit',
     component: () => import('../views/AdminRestaurantEdit.vue'),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: '/admin/restaurants/:id',
     name: 'admin-restaurant-show',
     component: () => import('../views/AdminRestaurantShow.vue'),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: '/admin/categories',
     name: 'admin-categories',
     component: () => import('../views/AdminCategories.vue'),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: '/admin/users',
     name: 'admin-users',
     component: () => import('../views/AdminUsers.vue'),
+    beforeEnter: authorizeIsAdmin,
   },
   {
     path: '*',
@@ -112,11 +129,12 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem('token')
+  const tokenInStore = store.state.token
 
-  let isAuthenticated = false
+  let isAuthenticated = store.state.isAuthenticated
 
-  // 如果有 token 才向後端驗證
-  if (token) {
+  // 如果有 token，且 token 不一樣的時候才向後端驗證
+  if (token && token !== tokenInStore) {
     isAuthenticated = await store.dispatch('fetchCurrentUser')
   }
 
