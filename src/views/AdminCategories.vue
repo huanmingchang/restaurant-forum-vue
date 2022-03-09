@@ -24,7 +24,8 @@
         </div>
       </div>
     </form>
-    <table class="table">
+    <Spinner v-if="isLoading" />
+    <table v-else class="table">
       <thead class="thead-dark">
         <tr>
           <th scope="col" width="60">#</th>
@@ -90,6 +91,7 @@
 
 <script>
 import AdminNav from '@/components/AdminNav'
+import Spinner from './../components/Spinner'
 import adminAPI from './../apis/admin'
 import { Toast } from './../utils/helpers'
 
@@ -97,6 +99,7 @@ export default {
   name: 'AdminCategories',
   components: {
     AdminNav,
+    Spinner,
   },
   data() {
     return {
