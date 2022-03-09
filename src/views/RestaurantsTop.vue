@@ -72,7 +72,7 @@ export default {
   data() {
     return {
       restaurants: [],
-      isLoading = true
+      isLoading: true,
     }
   },
   methods: {

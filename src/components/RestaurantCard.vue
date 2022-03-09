@@ -161,7 +161,7 @@ export default {
         })
       }
     },
-    changeLoading(e) {
+    changeLoading() {
       this.isLoading = false
     },
   },
